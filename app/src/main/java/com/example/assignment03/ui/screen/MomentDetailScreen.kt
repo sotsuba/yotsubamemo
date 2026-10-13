@@ -37,7 +37,8 @@ fun MomentDetailScreen(
     onBack: () -> Unit,
     onEdit: () -> Unit,
     onShare: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    shareEnabled: Boolean = true
 ) {
     val dateText = remember(entry.createdAt) {
         SimpleDateFormat(
@@ -52,7 +53,8 @@ fun MomentDetailScreen(
             MomentDetailTopBar(
                 onBack = onBack,
                 onEdit = onEdit,
-                onShare = onShare
+                onShare = onShare,
+                shareEnabled = shareEnabled
             )
         }
     ) { innerPadding ->

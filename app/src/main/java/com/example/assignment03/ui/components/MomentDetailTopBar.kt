@@ -26,7 +26,8 @@ fun MomentDetailTopBar(
     onBack: () -> Unit,
     onEdit: () -> Unit,
     onShare: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    shareEnabled: Boolean = true
 ) {
     Surface(
         modifier = modifier
@@ -62,7 +63,7 @@ fun MomentDetailTopBar(
                     )
                 }
 
-                IconButton(onClick = onShare) {
+                IconButton(onClick = onShare, enabled = shareEnabled) {
                     Icon(
                         Icons.Outlined.Share,
                         contentDescription = "Share"
