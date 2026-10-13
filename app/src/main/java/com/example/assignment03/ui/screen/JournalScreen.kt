@@ -23,19 +23,11 @@ fun JournalScreen(
     entries: List<JournalPreviewEntry> = sampleEntries,
     onEntryClick: (Int) -> Unit = {}
 ) {
-    var selectedTab by remember { mutableStateOf(NavTab.JOURNAL) }
-
     Scaffold(
         topBar = {
             JournalTopBar(
                 onSearchClick = {},
                 onMenuClick = {}
-            )
-        },
-        bottomBar = {
-            JournalBottomBar(
-                currentTab = selectedTab,
-                onTabSelected = { selectedTab = it }
             )
         }
     ) { innerPadding ->
