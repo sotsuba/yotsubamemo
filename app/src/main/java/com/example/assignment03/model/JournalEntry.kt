@@ -6,5 +6,6 @@ data class JournalEntry(
     val content: String = "",
     val photoUri: String? = null,
     val mood: String? = null,
-    val createdAt: Long = System.currentTimeMillis()
+    val createdAt: Long = System.currentTimeMillis(),
+    val updatedAt: Long = createdAt
 )
