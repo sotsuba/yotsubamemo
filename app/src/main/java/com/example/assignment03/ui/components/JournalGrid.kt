@@ -1,7 +1,6 @@
 package com.example.assignment03.ui.components
 
 import androidx.annotation.DrawableRes
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -12,8 +11,8 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import coil3.compose.AsyncImage
 import com.example.assignment03.R
 
 data class JournalPreviewEntry(
@@ -56,8 +55,8 @@ fun JournalGrid(
                 title = entry.title,
                 date = entry.date,
                 image = {
-                    Image(
-                        painter = painterResource(id = entry.imageRes),
+                    AsyncImage(
+                        model = entry.imageRes,
                         contentDescription = entry.title,
                         contentScale = ContentScale.Crop,
                         modifier = Modifier.fillMaxSize()
