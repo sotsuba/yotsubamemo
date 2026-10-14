@@ -1,4 +1,3 @@
-
 package com.example.assignment03.ui.screen
 
 import androidx.compose.animation.AnimatedVisibility
@@ -7,24 +6,18 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.ui.tooling.preview.Preview
@@ -34,36 +27,27 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-data class MemoDraft(
-    val title: String?,
-    val content: String,
-    val photoUri: String?,
-    val mood: String?,
-    val createdAt: Long
-)
-
 @Composable
 fun EntryEditorScreen(
     modifier: Modifier = Modifier,
     photoUri: String? = null,
-    onTakePhoto: () -> Unit = {},
+    title: String = "",
+    content: String = "",
+    mood: String? = null,
+    saving: Boolean = false,
+    importing: Boolean = false,
+    error: String? = null,
+    onTitleChange: (String) -> Unit = {},
+    onContentChange: (String) -> Unit = {},
+    onMoodChange: (String?) -> Unit = {},
     onChoosePhoto: () -> Unit = {},
     onBack: () -> Unit = {},
-    onSave: (MemoDraft) -> Unit = {}
+    editing: Boolean = false,
+    createdAt: Long = System.currentTimeMillis(),
+    onRemovePhoto: () -> Unit = {},
+    onSave: () -> Unit = {}
 ) {
-    var title by rememberSaveable {
-        mutableStateOf("")
-    }
-
-    var content by rememberSaveable {
-        mutableStateOf("")
-    }
-
-    var mood by rememberSaveable {
-        mutableStateOf<String?>(null)
-    }
-
-    val createdAt = remember { System.currentTimeMillis() }
+    val busy = saving || importing
 
     val date = remember(createdAt) {
         SimpleDateFormat(
@@ -91,15 +75,15 @@ fun EntryEditorScreen(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                IconButton(onClick = onBack) {
+                IconButton(onClick = onBack, enabled = !busy) {
                     Icon(
-                        Icons.Default.ArrowBack,
+                        Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Back"
                     )
                 }
 
                 Text(
-                    text = "New Moment",
+                    text = if (editing) "Edit Moment" else "New Moment",
                     style = MaterialTheme.typography.titleMedium
                 )
 
@@ -112,18 +96,8 @@ fun EntryEditorScreen(
                 color = MaterialTheme.colorScheme.background
             ) {
                 Button(
-                    enabled = canSave,
-                    onClick = {
-                        onSave(
-                            MemoDraft(
-                                title = title.trim().ifBlank { null },
-                                content = content.trim(),
-                                photoUri = photoUri,
-                                mood = mood,
-                                createdAt = createdAt
-                            )
-                        )
-                    },
+                    enabled = canSave && !busy,
+                    onClick = onSave,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(20.dp),
@@ -134,7 +108,7 @@ fun EntryEditorScreen(
                         contentDescription = null
                     )
                     Spacer(Modifier.width(8.dp))
-                    Text("Save Moment")
+                    Text(if (saving) "Saving…" else if (importing) "Loading photo…" else "Save Moment")
                 }
             }
         }
@@ -149,6 +123,8 @@ fun EntryEditorScreen(
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
 
+            error?.let { Text(it, color = MaterialTheme.colorScheme.error) }
+
             // Photo
             AnimatedVisibility(visible = !isKeyboardVisible) {
                 Box(
@@ -159,7 +135,7 @@ fun EntryEditorScreen(
                         .background(
                             MaterialTheme.colorScheme.primaryContainer
                         )
-                        .clickable { onChoosePhoto() },
+                        .clickable(enabled = !busy) { onChoosePhoto() },
                     contentAlignment = Alignment.Center
                 ) {
                     if (photoUri != null) {
@@ -192,6 +168,10 @@ fun EntryEditorScreen(
                 }
             }
 
+            if (photoUri != null) {
+                TextButton(onClick = onRemovePhoto, enabled = !busy) { Text("Remove photo") }
+            }
+
             // Date
             Text(
                 text = date,
@@ -205,7 +185,8 @@ fun EntryEditorScreen(
             ) {
                 BasicTextField(
                     value = title,
-                    onValueChange = { title = it },
+                    onValueChange = onTitleChange,
+                    enabled = !busy,
                     singleLine = true,
                     textStyle = MaterialTheme.typography.titleLarge.copy(
                         color = MaterialTheme.colorScheme.onSurface
@@ -234,7 +215,8 @@ fun EntryEditorScreen(
             // Journal content
             BasicTextField(
                 value = content,
-                onValueChange = { content = it },
+                onValueChange = onContentChange,
+                enabled = !busy,
                 textStyle = MaterialTheme.typography.bodyLarge.copy(
                     color = MaterialTheme.colorScheme.onSurface
                 ),
@@ -273,12 +255,9 @@ fun EntryEditorScreen(
                         .forEach { option ->
                             FilterChip(
                                 selected = mood == option,
+                                enabled = !busy,
                                 onClick = {
-                                    mood = if (mood == option) {
-                                        null
-                                    } else {
-                                        option
-                                    }
+                                    onMoodChange(if (mood == option) null else option)
                                 },
                                 label = { Text(option) }
                             )
@@ -304,7 +283,6 @@ private fun EntryEditorPreview() {
     ) {
         EntryEditorScreen(
             photoUri = null,
-            onTakePhoto = {},
             onChoosePhoto = {},
             onBack = {},
             onSave = {}

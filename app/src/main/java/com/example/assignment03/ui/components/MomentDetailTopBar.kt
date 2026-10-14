@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.Icon
@@ -27,6 +28,8 @@ fun MomentDetailTopBar(
     onEdit: () -> Unit,
     onShare: () -> Unit,
     modifier: Modifier = Modifier,
+    onDelete: () -> Unit = {},
+    actionsEnabled: Boolean = true,
     shareEnabled: Boolean = true
 ) {
     Surface(
@@ -56,14 +59,17 @@ fun MomentDetailTopBar(
             )
 
             Row {
-                IconButton(onClick = onEdit) {
+                IconButton(onClick = onDelete, enabled = actionsEnabled) {
+                    Icon(Icons.Outlined.Delete, contentDescription = "Delete")
+                }
+                IconButton(onClick = onEdit, enabled = actionsEnabled) {
                     Icon(
                         Icons.Outlined.Edit,
                         contentDescription = "Edit"
                     )
                 }
 
-                IconButton(onClick = onShare, enabled = shareEnabled) {
+                IconButton(onClick = onShare, enabled = shareEnabled && actionsEnabled) {
                     Icon(
                         Icons.Outlined.Share,
                         contentDescription = "Share"

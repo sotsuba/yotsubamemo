@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.AssistChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -38,6 +37,8 @@ fun MomentDetailScreen(
     onEdit: () -> Unit,
     onShare: () -> Unit,
     modifier: Modifier = Modifier,
+    onDelete: () -> Unit = {},
+    actionsEnabled: Boolean = true,
     shareEnabled: Boolean = true
 ) {
     val dateText = remember(entry.createdAt) {
@@ -53,6 +54,8 @@ fun MomentDetailScreen(
             MomentDetailTopBar(
                 onBack = onBack,
                 onEdit = onEdit,
+                onDelete = onDelete,
+                actionsEnabled = actionsEnabled,
                 onShare = onShare,
                 shareEnabled = shareEnabled
             )
@@ -107,10 +110,7 @@ fun MomentDetailScreen(
 
             // Mood if available
             if (!entry.mood.isNullOrBlank()) {
-                AssistChip(
-                    onClick = {},
-                    label = { Text(text = entry.mood) }
-                )
+                Text(text = entry.mood, color = MaterialTheme.colorScheme.primary)
             }
 
             Spacer(Modifier.height(24.dp))

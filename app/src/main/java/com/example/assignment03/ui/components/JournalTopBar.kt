@@ -26,7 +26,6 @@ import androidx.compose.ui.graphics.luminance
 @Composable
 fun JournalTopBar(
     onSearchClick: () -> Unit,
-    onMenuClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val isDark = MaterialTheme.colorScheme.surface.luminance() < 0.5f
@@ -81,8 +80,7 @@ fun JournalTopBar(
 fun JournalTopBarPreview() {
     MemoTheme {
         JournalTopBar(
-            onSearchClick = {},
-            onMenuClick = {}
+            onSearchClick = {}
         )
     }
 }

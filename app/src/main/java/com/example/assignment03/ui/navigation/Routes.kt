@@ -10,10 +10,11 @@ data object SettingsRoute
 
 @Serializable
 data class MomentDetailRoute (
-    val entryId: Int
+    val entryId: Long
 )
 
 @Serializable
 data class EntryEditorRoute (
-    val entryId: Long? = null
+    val entryId: Long? = null,
+    val draftPhotoPath: String? = null
 )
