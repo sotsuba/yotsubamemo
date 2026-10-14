@@ -1,4 +1,3 @@
-
 # 🍀 memo
 
 <img src="assets/yotsuba_camera.jpg"
@@ -18,5 +17,13 @@
 </p>
 
 <br clear="left">
-
 <sub>📸 ˗ˏˋ Smile, you're on camera! ˎˊ˗ 🍀</sub>
+
+## Preview
+
+<video src="https://github.com/user-attachments/assets/e79b382e-1d5d-44fa-8a35-582f30b1f6ea"
+       width="360"
+       controls>
+</video>
+
+
